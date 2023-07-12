@@ -1,7 +1,5 @@
 package com.krekerok.user.entity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -46,6 +44,7 @@ public class User {
     private String email;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private Role role;
 
     @Column(name = "localization")
