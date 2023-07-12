@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserRegistrationResponse registerUser(RegisterRequest registerRequest, String localization) {
         User user = buildUser(registerRequest, localization);
-        if (userRepository.existsByUsernameOrByEmail(user.getUsername(), user.getEmail()))
+        if (userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail()))
             throw new IllegalArgumentException("Username or email already exists");
 
         userRepository.save(user);
