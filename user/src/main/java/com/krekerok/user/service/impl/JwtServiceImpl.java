@@ -26,17 +26,10 @@ public class JwtServiceImpl implements JwtService {
     @Value("${security.jwt.token.validity.refresh}")
     private long REFRESH_TOKEN_VALIDITY;
 
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
-
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-
+    @Override
     public String generateAccessToken(User user) {
         Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("user_id", user.getUserId());
         extraClaims.put("role", user.getRole());
         return Jwts.builder()
             .setClaims(extraClaims)
@@ -48,6 +41,7 @@ public class JwtServiceImpl implements JwtService {
 
     }
 
+    @Override
     public String generateRefreshToken(User userDetails) {
         return Jwts.builder()
             .setSubject(userDetails.getEmail())
@@ -57,14 +51,26 @@ public class JwtServiceImpl implements JwtService {
             .compact();
     }
 
+    @Override
+    public boolean isTokenValid(String token, User user) {
+        final String email = extractEmail(token);
+        return (email.equals(user.getEmail())) && !isTokenExpired(token);
+    }
+
+    @Override
+    public String extractEmail(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    @Override
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
     private Key getRefreshTokenSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    public boolean isTokenValid(String token, User user) {
-        final String username = extractUsername(token);
-        return (username.equals(user.getEmail())) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

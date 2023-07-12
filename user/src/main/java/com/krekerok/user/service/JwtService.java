@@ -6,12 +6,13 @@ import java.util.function.Function;
 
 public interface JwtService {
 
-    String extractUsername(String token);
-    <T> T extractClaim(String token, Function<Claims, T> claimsResolver);
-
     String generateAccessToken(User user);
 
     String generateRefreshToken(User userDetails);
 
     boolean isTokenValid(String token, User user);
+
+    String extractEmail(String token);
+
+    <T> T extractClaim(String token, Function<Claims, T> claimsResolver);
 }
