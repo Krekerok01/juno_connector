@@ -20,11 +20,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
+@Table(name = "users")
 @Setter
 @Getter
 @Builder
 @ToString
-@Table(name = "users")
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
