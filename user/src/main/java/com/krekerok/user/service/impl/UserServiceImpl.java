@@ -4,6 +4,7 @@ import com.krekerok.user.dto.request.RegisterRequest;
 import com.krekerok.user.dto.response.UserRegistrationResponse;
 import com.krekerok.user.entity.Role;
 import com.krekerok.user.entity.User;
+import com.krekerok.user.mapper.UserMapper;
 import com.krekerok.user.repository.UserRepository;
 import com.krekerok.user.service.JwtService;
 import com.krekerok.user.service.UserService;
@@ -19,6 +20,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
     private final JwtService jwtService;
 
     @Override
@@ -29,11 +31,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        return UserRegistrationResponse.builder()
-            .userId(user.getUserId())
-            .username(user.getUsername())
-            .email(user.getEmail())
-            .build();
+        return userMapper.toUserRegistrationResponse(user);
     }
 
     private User buildUser(RegisterRequest registerRequest, String localization) {
