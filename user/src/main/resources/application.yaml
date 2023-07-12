@@ -20,3 +20,10 @@ server:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.yaml
 
+security:
+  jwt:
+    secret: 54SF5S7F1F3J9W7T888K3R9E3K7E1R3O5K888DFB2D6G5J4D2H5D
+    token:
+      validity:
+        access: 30
+        refresh: 15
