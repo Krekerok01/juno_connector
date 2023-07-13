@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+security:
+  jwt:
+    secret: 54SF5S7F1F3J9W7T888K3R9E3K7E1R3O5K888DFB2D6G5J4D2H5D
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL}
+
+spring:
+  application:
+    name: gateway-service
+  config:
+    import: optional:file:./gateway/.env[.properties]
+  cloud:
+    gateway:
+      routes:
+        - id: auth
+          uri: lb://user-service
+          predicates:
+            - Path=/authenticate/**
+          filters:
+            - RewritePath=/authenticate(?<remaining>.*), /api/v1/auth${remaining}
