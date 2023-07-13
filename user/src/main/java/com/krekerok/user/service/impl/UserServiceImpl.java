@@ -4,10 +4,12 @@ import com.krekerok.user.dto.request.RegisterRequest;
 import com.krekerok.user.dto.response.UserRegistrationResponse;
 import com.krekerok.user.entity.Role;
 import com.krekerok.user.entity.User;
+import com.krekerok.user.exception.EntityExistsException;
 import com.krekerok.user.mapper.UserMapper;
 import com.krekerok.user.repository.UserRepository;
 import com.krekerok.user.service.JwtService;
 import com.krekerok.user.service.UserService;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +29,7 @@ public class UserServiceImpl implements UserService {
     public UserRegistrationResponse registerUser(RegisterRequest registerRequest, String localization) {
         User user = buildUser(registerRequest, localization);
         if (userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail()))
-            throw new IllegalArgumentException("Username or email already exists");
+            throw new EntityExistsException("Username or email already exists");
 
         userRepository.save(user);
 
@@ -40,7 +42,7 @@ public class UserServiceImpl implements UserService {
             .password(passwordEncoder.encode(registerRequest.getPassword()))
             .email(registerRequest.getEmail())
             .role(Role.USER)
-            .localization(localization)
+            .localization(Objects.requireNonNullElse(localization, "EN"))
             .build();
     }
 }
