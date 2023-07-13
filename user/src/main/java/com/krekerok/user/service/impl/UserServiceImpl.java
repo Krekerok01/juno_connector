@@ -1,17 +1,23 @@
 package com.krekerok.user.service.impl;
 
+import com.krekerok.user.dto.request.LoginRequest;
 import com.krekerok.user.dto.request.RegisterRequest;
+import com.krekerok.user.dto.response.UserLoginResponse;
 import com.krekerok.user.dto.response.UserRegistrationResponse;
 import com.krekerok.user.entity.Role;
 import com.krekerok.user.entity.User;
+import com.krekerok.user.exception.EntityExistsException;
+import com.krekerok.user.exception.InvalidCredentialsException;
 import com.krekerok.user.mapper.UserMapper;
 import com.krekerok.user.repository.UserRepository;
 import com.krekerok.user.service.JwtService;
 import com.krekerok.user.service.UserService;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -27,11 +33,26 @@ public class UserServiceImpl implements UserService {
     public UserRegistrationResponse registerUser(RegisterRequest registerRequest, String localization) {
         User user = buildUser(registerRequest, localization);
         if (userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail()))
-            throw new IllegalArgumentException("Username or email already exists");
+            throw new EntityExistsException("Username or email already exists");
 
         userRepository.save(user);
 
         return userMapper.toUserRegistrationResponse(user);
+    }
+
+    @Override
+    @Transactional
+    public UserLoginResponse loginUser(LoginRequest loginRequest) {
+        User user = userRepository.findByEmail(loginRequest.getEmail())
+            .orElseThrow(() -> new InvalidCredentialsException("Invalid login or password"));
+        if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            return UserLoginResponse.builder()
+                .accessToken(jwtService.generateAccessToken(user))
+                .refreshToken(jwtService.generateRefreshToken(user))
+                .build();
+        } else {
+            throw new InvalidCredentialsException("Invalid login or password");
+        }
     }
 
     private User buildUser(RegisterRequest registerRequest, String localization) {
@@ -40,7 +61,7 @@ public class UserServiceImpl implements UserService {
             .password(passwordEncoder.encode(registerRequest.getPassword()))
             .email(registerRequest.getEmail())
             .role(Role.USER)
-            .localization(localization)
+            .localization(Objects.requireNonNullElse(localization, "EN"))
             .build();
     }
 }
