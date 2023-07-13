@@ -1,4 +1,4 @@
-FROM gradle:7.6-alpine AS build
+FROM gradle:7.6-jdk AS build
 ENV APP_HOME=/app/
 WORKDIR $APP_HOME
 COPY build.gradle settings.gradle $APP_HOME
@@ -8,7 +8,7 @@ RUN gradle build --exclude-task test
 # Run stage
 FROM openjdk:17-oracle
 ENV APP_HOME=/app/
-ENV ARTIFACT_NAME=eureka-0.0.1-SNAPSHOT.jar
+ENV ARTIFACT_NAME=user-0.0.1-SNAPSHOT.jar
 ARG JAR_FILE=$APP_HOME/build/libs/$ARTIFACT_NAME
-COPY --from=build $JAR_FILE /opt/eureka-server/app.jar
-ENTRYPOINT ["java", "-jar", "/opt/eureka-server/app.jar"]
+COPY --from=build $JAR_FILE /opt/user-service/app.jar
+ENTRYPOINT ["java", "-jar", "/opt/user-service/app.jar"]
