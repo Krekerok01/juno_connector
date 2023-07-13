@@ -1,6 +1,8 @@
 package com.krekerok.user.controller;
 
+import com.krekerok.user.dto.request.LoginRequest;
 import com.krekerok.user.dto.request.RegisterRequest;
+import com.krekerok.user.dto.response.UserLoginResponse;
 import com.krekerok.user.dto.response.UserRegistrationResponse;
 import com.krekerok.user.service.UserService;
 import javax.validation.Valid;
@@ -24,5 +26,10 @@ public class AuthenticationController {
     public UserRegistrationResponse register(@Valid @RequestBody RegisterRequest registerRequest,
                                              @RequestHeader(value = "Localization", required = false) String localization){
         return userService.registerUser(registerRequest, localization);
+    }
+
+    @PostMapping("/login")
+    public UserLoginResponse login(@Valid @RequestBody LoginRequest loginRequest){
+        return userService.loginUser(loginRequest);
     }
 }
