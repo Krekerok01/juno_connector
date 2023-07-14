@@ -31,7 +31,7 @@ services:
     build: user
     container_name: user-service
     environment:
-      DATASOURCE_URL: jdbc:postgresql://user-database:5433/user-db
+      DATASOURCE_URL: jdbc:postgresql://user-database:5432/user-db
       eureka.client.serviceUrl.defaultZone: http://eureka-server-service:8761/eureka/
     depends_on:
       eureka-server-service:
@@ -44,6 +44,6 @@ services:
     ports:
       - "5433:5432"
     environment:
-      POSTGRES_USER: users
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: user-db
