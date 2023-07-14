@@ -1,13 +1,23 @@
 package com.krekerok.user.controller;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krekerok.user.dto.request.LoginRequest;
 import com.krekerok.user.dto.request.RegisterRequest;
 import com.krekerok.user.dto.response.UserLoginResponse;
 import com.krekerok.user.dto.response.UserRegistrationResponse;
+import com.krekerok.user.service.TokenService;
 import com.krekerok.user.service.UserService;
+import java.io.IOException;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     private final UserService userService;
+    private final TokenService tokenService;
 
     @PostMapping("/register")
     public UserRegistrationResponse register(@Valid @RequestBody RegisterRequest registerRequest,
@@ -31,5 +42,10 @@ public class AuthenticationController {
     @PostMapping("/login")
     public UserLoginResponse login(@Valid @RequestBody LoginRequest loginRequest){
         return userService.loginUser(loginRequest);
+    }
+
+    @GetMapping("/refresh")
+    public UserLoginResponse refreshToken(HttpServletRequest request, HttpServletResponse response) {
+       return tokenService.refreshToken(request, response);
     }
 }

@@ -55,6 +55,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Exception email"));
+    }
+
     private User buildUser(RegisterRequest registerRequest, String localization) {
         return User.builder()
             .username(registerRequest.getUsername())

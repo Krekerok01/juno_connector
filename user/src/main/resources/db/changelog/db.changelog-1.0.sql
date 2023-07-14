@@ -16,3 +16,15 @@ create table if not exists users(
 
 -- changeset vmamatsiuk:2
 create index idx_username_and_email on users (username, email);
+
+-- changeset vmamatsiuk:3
+create sequence refresh_tokens_seq start 1 increment 1;
+
+create table if not exists refresh_tokens(
+    refresh_token_id bigserial not null,
+    token varchar(255) not null unique,
+    expiration_time timestamp,
+    user_id bigint references users(user_id) on delete cascade,
+
+    constraint refresh_tokens_pk primary key(refresh_token_id)
+);

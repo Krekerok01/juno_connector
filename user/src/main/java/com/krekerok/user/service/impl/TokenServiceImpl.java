@@ -1,0 +1,70 @@
+package com.krekerok.user.service.impl;
+
+import com.krekerok.user.dto.response.UserLoginResponse;
+import com.krekerok.user.entity.RefreshToken;
+import com.krekerok.user.entity.User;
+import com.krekerok.user.repository.RefreshTokenRepository;
+import com.krekerok.user.service.JwtService;
+import com.krekerok.user.service.TokenService;
+import com.krekerok.user.service.UserService;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpHeaders;
+import org.springframework.stereotype.Service;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class TokenServiceImpl implements TokenService {
+
+    private final JwtService jwtService;
+    private final UserService userService;
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    @Override
+    public UserLoginResponse refreshToken(HttpServletRequest request,
+        HttpServletResponse response) {
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String refreshToken;
+        try {
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                refreshToken = authHeader.substring("Bearer ".length());
+                checkToken(refreshToken);
+                User user = userService.findUserByEmail(jwtService.extractEmail(refreshToken));
+                saveOldToken(refreshToken, user);
+                if (jwtService.isTokenValid(refreshToken, user)) {
+                    String accessToken = jwtService.generateAccessToken(user);
+                    String newRefreshToken = jwtService.generateRefreshToken(user);
+                    return UserLoginResponse.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(newRefreshToken)
+                        .build();
+                }
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("Exception");
+        }
+        return null;
+    }
+
+
+    private void checkToken(String refreshToken) {
+        Optional<RefreshToken> checkedToken = refreshTokenRepository.findByToken(refreshToken);
+        if (checkedToken.isPresent()){
+            throw new RuntimeException("Refresh token has been used");
+        }
+    }
+
+    private void saveOldToken(String refreshToken, User user) {
+        RefreshToken token = RefreshToken.builder()
+            .token(refreshToken)
+            .user(user)
+            .expirationTime(LocalDateTime.now())
+            .build();
+        refreshTokenRepository.save(token);
+    }
+}
