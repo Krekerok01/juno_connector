@@ -31,6 +31,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserRegistrationResponse registerUser(RegisterRequest registerRequest, String localization) {
+        log.info("Registration of a new user: {}", registerRequest);
         User user = buildUser(registerRequest, localization);
         if (userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail()))
             throw new EntityExistsException("Username or email already exists");
@@ -55,8 +56,10 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    //error
     @Override
     public User findUserByEmail(String email) {
+        log.info("Getting a user by email: {}", email);
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("Exception email"));
     }

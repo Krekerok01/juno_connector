@@ -10,7 +10,6 @@ import com.krekerok.user.service.UserService;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
@@ -26,31 +25,24 @@ public class TokenServiceImpl implements TokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public UserLoginResponse refreshToken(HttpServletRequest request,
-        HttpServletResponse response) {
+    public UserLoginResponse refreshToken(HttpServletRequest request) {
+        log.info("Refreshing a token.");
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         String refreshToken;
-        try {
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                refreshToken = authHeader.substring("Bearer ".length());
-                checkToken(refreshToken);
-                User user = userService.findUserByEmail(jwtService.extractEmail(refreshToken));
-                saveOldToken(refreshToken, user);
-                if (jwtService.isTokenValid(refreshToken, user)) {
-                    String accessToken = jwtService.generateAccessToken(user);
-                    String newRefreshToken = jwtService.generateRefreshToken(user);
-                    return UserLoginResponse.builder()
-                        .accessToken(accessToken)
-                        .refreshToken(newRefreshToken)
-                        .build();
-                }
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            refreshToken = authHeader.substring("Bearer ".length());
+            checkToken(refreshToken);
+            User user = userService.findUserByEmail(jwtService.extractEmail(refreshToken));
+            saveOldToken(refreshToken, user);
+            if (jwtService.isTokenValid(refreshToken, user)) {
+                String accessToken = jwtService.generateAccessToken(user);
+                String newRefreshToken = jwtService.generateRefreshToken(user);
+                return buildUserLoginResponse(accessToken, newRefreshToken);
             }
-        } catch (Exception ex) {
-            throw new RuntimeException("Exception");
         }
         return null;
     }
-
 
     private void checkToken(String refreshToken) {
         Optional<RefreshToken> checkedToken = refreshTokenRepository.findByToken(refreshToken);
@@ -66,5 +58,12 @@ public class TokenServiceImpl implements TokenService {
             .expirationTime(LocalDateTime.now())
             .build();
         refreshTokenRepository.save(token);
+    }
+
+    private UserLoginResponse buildUserLoginResponse(String accessToken, String refreshToken) {
+        return UserLoginResponse.builder()
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .build();
     }
 }

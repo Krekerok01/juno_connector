@@ -45,7 +45,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/refresh")
-    public UserLoginResponse refreshToken(HttpServletRequest request, HttpServletResponse response) {
-       return tokenService.refreshToken(request, response);
+    public UserLoginResponse refreshToken(HttpServletRequest request) {
+       return tokenService.refreshToken(request);
     }
 }
