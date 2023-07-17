@@ -7,12 +7,15 @@ import com.krekerok.user.dto.response.UserResponse;
 import com.krekerok.user.entity.Role;
 import com.krekerok.user.entity.User;
 import com.krekerok.user.exception.EntityExistsException;
+import com.krekerok.user.exception.EntityNotFoundException;
 import com.krekerok.user.exception.InvalidCredentialsException;
 import com.krekerok.user.mapper.UserMapper;
 import com.krekerok.user.repository.UserRepository;
 import com.krekerok.user.service.JwtService;
 import com.krekerok.user.service.UserService;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -56,12 +59,35 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //error
     @Override
     public User findUserByEmail(String email) {
         log.info("Getting a user by email: {}", email);
         return userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("Exception email"));
+            .orElseThrow(() -> new EntityNotFoundException("User with email " + email + " not found"));
+    }
+
+    @Override
+    public List<UserResponse> findAll() {
+        return userRepository.findAll().stream()
+            .map(userMapper::toUserResponse)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserResponse findById(Long userId) {
+        return userRepository.findById(userId)
+            .map(userMapper::toUserResponse)
+            .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
+    }
+
+    @Override
+    public void deleteById(Long userId) {
+        userRepository.delete(findUserById(userId));
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
     }
 
     private User buildUser(RegisterRequest registerRequest, String localization) {

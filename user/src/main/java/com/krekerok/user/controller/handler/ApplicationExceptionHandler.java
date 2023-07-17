@@ -2,6 +2,7 @@ package com.krekerok.user.controller.handler;
 
 import com.krekerok.user.dto.response.ExceptionResponse;
 import com.krekerok.user.exception.EntityExistsException;
+import com.krekerok.user.exception.EntityNotFoundException;
 import com.krekerok.user.exception.InvalidCredentialsException;
 import java.util.List;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -18,6 +19,11 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<ExceptionResponse> entityExistsExceptionHandler(EntityExistsException e) {
         return new ResponseEntity<>(buildExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> entityNotFoundExceptionHandler(EntityNotFoundException e) {
+        return new ResponseEntity<>(buildExceptionResponse(e.getMessage(), HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
