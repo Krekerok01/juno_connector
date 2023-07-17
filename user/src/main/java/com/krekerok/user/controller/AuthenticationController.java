@@ -3,7 +3,7 @@ package com.krekerok.user.controller;
 import com.krekerok.user.dto.request.LoginRequest;
 import com.krekerok.user.dto.request.RegisterRequest;
 import com.krekerok.user.dto.response.UserLoginResponse;
-import com.krekerok.user.dto.response.UserRegistrationResponse;
+import com.krekerok.user.dto.response.UserResponse;
 import com.krekerok.user.service.TokenService;
 import com.krekerok.user.service.UserService;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +27,7 @@ public class AuthenticationController {
     private final TokenService tokenService;
 
     @PostMapping("/register")
-    public UserRegistrationResponse register(@Valid @RequestBody RegisterRequest registerRequest,
+    public UserResponse register(@Valid @RequestBody RegisterRequest registerRequest,
                                              @RequestHeader(value = "Localization", required = false) String localization){
         return userService.registerUser(registerRequest, localization);
     }

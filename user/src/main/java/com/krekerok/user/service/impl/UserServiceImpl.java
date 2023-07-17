@@ -3,7 +3,7 @@ package com.krekerok.user.service.impl;
 import com.krekerok.user.dto.request.LoginRequest;
 import com.krekerok.user.dto.request.RegisterRequest;
 import com.krekerok.user.dto.response.UserLoginResponse;
-import com.krekerok.user.dto.response.UserRegistrationResponse;
+import com.krekerok.user.dto.response.UserResponse;
 import com.krekerok.user.entity.Role;
 import com.krekerok.user.entity.User;
 import com.krekerok.user.exception.EntityExistsException;
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     private final JwtService jwtService;
 
     @Override
-    public UserRegistrationResponse registerUser(RegisterRequest registerRequest, String localization) {
+    public UserResponse registerUser(RegisterRequest registerRequest, String localization) {
         log.info("Registration of a new user: {}", registerRequest);
         User user = buildUser(registerRequest, localization);
         if (userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail()))
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        return userMapper.toUserRegistrationResponse(user);
+        return userMapper.toUserResponse(user);
     }
 
     @Override
