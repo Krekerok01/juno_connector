@@ -1,5 +1,6 @@
 package com.krekerok.gateway.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,13 +13,10 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Component
+@RequiredArgsConstructor
 public class SecurityContextRepository implements ServerSecurityContextRepository {
 
     private final AuthenticationManager authenticationManager;
-
-    public SecurityContextRepository(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
 
     @Override
     public Mono<Void> save(ServerWebExchange swe, SecurityContext sc) {
@@ -39,5 +37,4 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
             return Mono.empty();
         }
     }
-
 }
