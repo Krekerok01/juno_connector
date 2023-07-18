@@ -3,6 +3,7 @@ package com.krekerok.user.service.impl;
 import com.krekerok.user.dto.response.UserLoginResponse;
 import com.krekerok.user.entity.RefreshToken;
 import com.krekerok.user.entity.User;
+import com.krekerok.user.exception.InvalidTokenException;
 import com.krekerok.user.repository.RefreshTokenRepository;
 import com.krekerok.user.service.JwtService;
 import com.krekerok.user.service.TokenService;
@@ -47,7 +48,7 @@ public class TokenServiceImpl implements TokenService {
     private void checkToken(String refreshToken) {
         Optional<RefreshToken> checkedToken = refreshTokenRepository.findByToken(refreshToken);
         if (checkedToken.isPresent()){
-            throw new RuntimeException("Refresh token has been used");
+            throw new InvalidTokenException("Refresh token has been used");
         }
     }
 

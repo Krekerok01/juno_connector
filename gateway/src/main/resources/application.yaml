@@ -24,3 +24,9 @@ spring:
             - Path=/authenticate/**
           filters:
             - RewritePath=/authenticate(?<remaining>.*), /api/v1/auth${remaining}
+        - id: users
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**
+          filters:
+            - RewritePath=/users(?<remaining>.*), /api/v1/users${remaining}
