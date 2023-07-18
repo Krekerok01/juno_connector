@@ -22,8 +22,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        return http.cors().and()
-            .csrf()
+        return http.cors().and().csrf()
             .disable()
             .authorizeExchange()
             .pathMatchers(HttpMethod.OPTIONS, "/**")

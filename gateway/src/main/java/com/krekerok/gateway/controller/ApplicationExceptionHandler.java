@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
     @ExceptionHandler(ServiceUnavailableException.class)
-    public ResponseEntity<ExceptionResponse> ticketServiceServerExceptionHandler(RuntimeException e) {
+    public ResponseEntity<ExceptionResponse> serviceUnavailableExceptionHandler(RuntimeException e) {
         return new ResponseEntity<>(buildExceptionResponse(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE), HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler(ServiceClientException.class)
-    public ResponseEntity<ExceptionResponse> ticketServiceClientExceptionHandler(RuntimeException e) {
+    public ResponseEntity<ExceptionResponse> serviceClientExceptionHandler(RuntimeException e) {
         return new ResponseEntity<>(buildExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
     }
 
