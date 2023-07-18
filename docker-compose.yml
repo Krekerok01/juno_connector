@@ -26,6 +26,29 @@ services:
       eureka-server-service:
         condition: service_healthy
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper-service
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-service
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: LISTENER://kafka:9092,LISTENER_HOST://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER:PLAINTEXT,LISTENER_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
   user-service:
     image: junoconnector-user-service:latest
     build: user
@@ -33,10 +56,13 @@ services:
     environment:
       DATASOURCE_URL: jdbc:postgresql://user-database:5432/user-db
       eureka.client.serviceUrl.defaultZone: http://eureka-server-service:8761/eureka/
+      KAFKA_PORT: kafka:9092
     depends_on:
       eureka-server-service:
         condition: service_healthy
       user-database:
+        condition: service_started
+      kafka:
         condition: service_started
   user-database:
     container_name: user-database

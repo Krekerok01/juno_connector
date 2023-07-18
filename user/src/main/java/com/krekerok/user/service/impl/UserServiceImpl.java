@@ -1,5 +1,7 @@
 package com.krekerok.user.service.impl;
 
+import com.krekerok.user.dto.kafka.RegistrationMessageDto;
+import com.krekerok.user.dto.kafka.RegistrationPayload;
 import com.krekerok.user.dto.request.LoginRequest;
 import com.krekerok.user.dto.request.RegisterRequest;
 import com.krekerok.user.dto.response.UserLoginResponse;
@@ -9,12 +11,14 @@ import com.krekerok.user.entity.User;
 import com.krekerok.user.exception.EntityExistsException;
 import com.krekerok.user.exception.EntityNotFoundException;
 import com.krekerok.user.exception.InvalidCredentialsException;
+import com.krekerok.user.kafka.KafkaService;
 import com.krekerok.user.mapper.UserMapper;
 import com.krekerok.user.repository.UserRepository;
 import com.krekerok.user.service.JwtService;
 import com.krekerok.user.service.UserService;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +35,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final JwtService jwtService;
+    private final KafkaService kafkaService;
+    private final ExecutorService executorService;
 
     @Override
     public UserResponse registerUser(RegisterRequest registerRequest, String localization) {
@@ -40,7 +46,7 @@ public class UserServiceImpl implements UserService {
             throw new EntityExistsException("Username or email already exists");
 
         userRepository.save(user);
-
+        sendGreetingMessage(user);
         return userMapper.toUserResponse(user);
     }
 
@@ -98,5 +104,18 @@ public class UserServiceImpl implements UserService {
             .role(Role.USER)
             .localization(Objects.requireNonNullElse(localization, "EN"))
             .build();
+    }
+
+    private void sendGreetingMessage(User user) {
+        RegistrationPayload payload = RegistrationPayload.builder()
+            .username(user.getUsername())
+            .role(user.getRole().toString())
+            .build();
+        RegistrationMessageDto greetingMessage = RegistrationMessageDto.builder()
+            .email(user.getEmail())
+            .localization(user.getLocalization())
+            .payload(payload)
+            .build();
+        executorService.submit(() -> kafkaService.sendMessageRegister(greetingMessage));
     }
 }

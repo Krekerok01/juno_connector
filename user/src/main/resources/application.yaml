@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: user-service
+  kafka:
+    bootstrap-servers: ${KAFKA_PORT}
 
   config:
     import: optional:file:./user/.env[.properties]
@@ -37,3 +39,6 @@ security:
       validity:
         access: 30
         refresh: 15
+
+topic:
+  registration: registration
