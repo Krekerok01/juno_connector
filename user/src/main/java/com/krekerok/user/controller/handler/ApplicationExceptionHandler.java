@@ -4,6 +4,7 @@ import com.krekerok.user.dto.response.ExceptionResponse;
 import com.krekerok.user.exception.EntityExistsException;
 import com.krekerok.user.exception.EntityNotFoundException;
 import com.krekerok.user.exception.InvalidCredentialsException;
+import com.krekerok.user.exception.InvalidTokenException;
 import java.util.List;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,11 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ExceptionResponse> invalidCredentialsExceptionHandler(InvalidCredentialsException e) {
         return new ResponseEntity<>(buildExceptionResponse(e.getMessage(), HttpStatus.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidTokenException(InvalidTokenException e) {
+        return new ResponseEntity<>(buildExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
