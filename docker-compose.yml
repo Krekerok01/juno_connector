@@ -49,6 +49,22 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+  notifications-service:
+    container_name: notifications-service
+    image: junoconnector-notifications-service:latest
+    build: notification
+    depends_on:
+      eureka-server-service:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      EUREKA_URL: http://eureka-server-service:8761/eureka/
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: test
+      GMAIL_USERNAME: juno.connector@gmail.com
+      GMAIL_PASSWORD: tjohnwfrsiryitrf
+
   user-service:
     image: junoconnector-user-service:latest
     build: user
