@@ -28,8 +28,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void processMessageSending(BaseMessage message) {
-        String emailContent = getEmailContent(message);
-        emailSenderService.sendMessage(message.getEmail(), messageSubjectGetter.getSubject(message), emailContent);
+        String text = getEmailContent(message);
+        emailSenderService.sendMessage(message.getEmail(), messageSubjectGetter.getSubject(message), text);
     }
 
     // изменить обработку ошибок
@@ -49,6 +49,6 @@ public class NotificationServiceImpl implements NotificationService {
     private String getFilePath(MessageType messageType) {
         if (messageType.equals(MessageType.GREETING))
             return "user/registration/userRegistrationTemplate.ftl";
-        throw new RuntimeException("Wrong message type");
+        return "";
     }
 }
