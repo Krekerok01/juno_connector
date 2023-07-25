@@ -15,13 +15,13 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder
 @ToString
-public class BaseMessage<T extends MessagePayload> implements AbstractMessage {
+public class BaseMessage {
     private String email;
 
     private MessageType messageType;
 
     private Locale localization;
 
-    private T payload;
+    private MessagePayload payload;
 }
 
