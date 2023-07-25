@@ -33,6 +33,7 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.springframework.boot:spring-boot-starter-mail:3.1.0'
 	implementation 'jakarta.mail:jakarta.mail-api:2.1.1'
+	implementation 'org.freemarker:freemarker:2.3.31'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
