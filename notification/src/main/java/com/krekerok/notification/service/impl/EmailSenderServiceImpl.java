@@ -1,5 +1,6 @@
 package com.krekerok.notification.service.impl;
 
+import com.krekerok.notification.exception.EmailSendingException;
 import com.krekerok.notification.service.EmailSenderService;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +25,9 @@ public class EmailSenderServiceImpl implements EmailSenderService {
             helper.setSubject(subject);
             helper.setText(text, true);
             javaMailSender.send(mimeMessage);
-            log.info("E-mail sent to " + email);
-        }
-
-
-        catch (Exception e) {
-            throw new RuntimeException(e);
+            log.info("Email sent to " + email);
+        } catch (Exception e) {
+            throw new EmailSendingException("Failed to send email");
         }
     }
 }
