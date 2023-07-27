@@ -15,6 +15,7 @@ import lombok.ToString;
 @Builder
 @ToString
 public class UserGreetingPayload implements MessagePayload {
-    private String username;
+    private String firstName;
+    private String lastName;
     private String role;
 }

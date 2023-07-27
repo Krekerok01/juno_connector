@@ -34,13 +34,16 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
 
-    @Column(name = "password")
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
+
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Enumerated(EnumType.STRING)

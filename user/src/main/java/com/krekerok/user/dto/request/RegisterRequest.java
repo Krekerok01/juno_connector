@@ -1,5 +1,6 @@
 package com.krekerok.user.dto.request;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -12,9 +13,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisterRequest {
 
-    @NotBlank(message = "Username cannot be empty")
-    @Size(min = 2, max = 30, message = "Username min size is 2 symbols and max size is 30 symbols")
-    private String username;
+    @NotBlank(message = "First name cannot be empty")
+    @Size(min = 2, max = 30, message = "First name min size is 2 symbols and max size is 60 symbols")
+    private String firstName;
+
+    @NotBlank(message = "Last name cannot be empty")
+    @Size(min = 2, max = 30, message = "Last name min size is 2 symbols and max size is 60 symbols")
+    private String lastName;
 
     @NotBlank(message = "Password cannot be empty")
     @Size(min = 6, max = 25, message = "Password min size is 2 symbols and max size is 30 symbols")

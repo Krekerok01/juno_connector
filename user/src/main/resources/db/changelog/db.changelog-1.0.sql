@@ -5,7 +5,8 @@ create sequence users_seq start 1 increment 1;
 
 create table if not exists users(
     user_id bigserial not null,
-    username varchar(30) not null unique,
+    first_name varchar(60) not null,
+    last_name varchar(60) not null,
     password varchar(200) not null,
     email varchar(256) not null unique,
     role varchar (10) not null,
@@ -15,7 +16,7 @@ create table if not exists users(
 );
 
 -- changeset vmamatsiuk:2
-create index idx_username_and_email on users (username, email);
+create index idx_email on users (email);
 
 -- changeset vmamatsiuk:3
 create sequence refresh_tokens_seq start 1 increment 1;
