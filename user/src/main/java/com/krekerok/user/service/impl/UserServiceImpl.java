@@ -42,8 +42,8 @@ public class UserServiceImpl implements UserService {
     public UserResponse registerUser(RegisterRequest registerRequest, String localization) {
         log.info("Registration of a new user: {}", registerRequest);
         User user = buildUser(registerRequest, localization);
-        if (userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail()))
-            throw new EntityExistsException("Username or email already exists");
+        if (userRepository.existsByEmail(user.getEmail()))
+            throw new EntityExistsException("Email already exists");
 
         userRepository.save(user);
         sendGreetingMessage(user);
@@ -98,7 +98,8 @@ public class UserServiceImpl implements UserService {
 
     private User buildUser(RegisterRequest registerRequest, String localization) {
         return User.builder()
-            .username(registerRequest.getUsername())
+            .firstName(registerRequest.getFirstName())
+            .lastName(registerRequest.getLastName())
             .password(passwordEncoder.encode(registerRequest.getPassword()))
             .email(registerRequest.getEmail())
             .role(Role.USER)
@@ -108,7 +109,8 @@ public class UserServiceImpl implements UserService {
 
     private void sendGreetingMessage(User user) {
         RegistrationPayload payload = RegistrationPayload.builder()
-            .username(user.getUsername())
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
             .role(user.getRole().toString())
             .build();
         RegistrationMessageDto greetingMessage = RegistrationMessageDto.builder()
