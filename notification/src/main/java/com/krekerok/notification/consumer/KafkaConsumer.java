@@ -18,6 +18,14 @@ public class KafkaConsumer {
     @KafkaListener(topics = "${spring.kafka.topics.user.registration}")
     public void consumeUserRegistrations(BaseMessage message)  {
         message.setMessageType(MessageType.GREETING);
+        System.out.println("consumeUserRegistrations");
+        notificationService.processMessageSending(message);
+    }
+
+    @KafkaListener(topics = "${spring.kafka.topics.user.change.password}")
+    public void consumeUserPasswordChanges(BaseMessage message)  {
+        message.setMessageType(MessageType.PASSWORD_CHANGE);
+        System.out.println("consumeUserPasswordChanges");
         notificationService.processMessageSending(message);
     }
 }

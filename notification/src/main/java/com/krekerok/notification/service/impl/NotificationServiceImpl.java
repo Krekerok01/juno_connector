@@ -64,8 +64,11 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private String getFilePath(MessageType messageType) {
-        if (messageType.equals(MessageType.GREETING))
+        if (messageType.equals(MessageType.GREETING)) {
             return "user/registration/userRegistrationTemplate.ftl";
+        } else if (messageType.equals(MessageType.PASSWORD_CHANGE)){
+            return "user/update/userChangePasswordTemplate.ftl";
+        }
         return "";
     }
 }
