@@ -1,6 +1,7 @@
 package com.krekerok.user.dto.request;
 
 import com.krekerok.user.util.validator.PasswordEquality;
+import com.krekerok.user.util.validator.PasswordInequality;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @PasswordEquality(password = "newPassword", confirmationPassword = "confirmationPassword")
+@PasswordInequality(oldPassword = "currentPassword", newPassword = "newPassword")
 public class ResetPasswordRequest {
 
     @NotBlank(message = "Current password cannot be empty")
