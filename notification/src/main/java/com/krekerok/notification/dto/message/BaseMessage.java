@@ -17,11 +17,7 @@ import lombok.ToString;
 @ToString
 public class BaseMessage {
     private String email;
-
     private MessageType messageType;
-
     private Locale localization;
-
     private MessagePayload payload;
 }
-

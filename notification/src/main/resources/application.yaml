@@ -17,6 +17,8 @@ spring:
     topics:
       user:
         registration: registration
+        change:
+          password: change_password
   mail:
     host: "smtp.gmail.com"
     port: 587
