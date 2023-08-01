@@ -13,8 +13,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationMessageDto {
+public class NotificationDto {
     private String email;
     private String localization;
-    private RegistrationPayload payload;
+    private Payload payload;
 }

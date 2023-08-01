@@ -1,12 +1,11 @@
 package com.krekerok.user.kafka;
 
-import com.krekerok.user.dto.kafka.RegistrationMessageDto;
+import com.krekerok.user.dto.kafka.NotificationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 @EnableKafka
@@ -14,13 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 @RequiredArgsConstructor
 public class KafkaService {
 
-    @Value("${topic.registration}")
-    private String registrationTopic;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void sendMessageRegister(RegistrationMessageDto message) {
-        kafkaTemplate.send(registrationTopic, message);
-        log.info("{} sent successfully in the topic: {}", message.toString(), registrationTopic);
+    public void sendMessage(String topic, NotificationDto notificationDto) {
+        kafkaTemplate.send(topic, notificationDto);
+        log.info("{} sent successfully in the topic: {}", notificationDto.toString(), topic);
     }
 }
 

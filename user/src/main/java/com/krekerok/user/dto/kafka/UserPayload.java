@@ -13,7 +13,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationPayload {
+public class UserPayload implements Payload{
     private String firstName;
     private String lastName;
     private String role;
