@@ -5,6 +5,7 @@ import com.krekerok.user.exception.EntityExistsException;
 import com.krekerok.user.exception.EntityNotFoundException;
 import com.krekerok.user.exception.InvalidCredentialsException;
 import com.krekerok.user.exception.InvalidTokenException;
+import com.krekerok.user.exception.VerificationException;
 import java.util.List;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,11 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<ExceptionResponse> handleInvalidTokenException(InvalidTokenException e) {
         return new ResponseEntity<>(buildExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(VerificationException.class)
+    public ResponseEntity<ExceptionResponse> handleVerificationException(VerificationException e) {
+        return new ResponseEntity<>(buildExceptionResponse(e.getMessage(), HttpStatus.FORBIDDEN), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
