@@ -1,7 +1,8 @@
 package com.krekerok.user.service.impl;
 
-import com.krekerok.user.dto.kafka.RegistrationMessageDto;
-import com.krekerok.user.dto.kafka.RegistrationPayload;
+import com.krekerok.user.dto.kafka.NotificationDto;
+import com.krekerok.user.dto.kafka.Payload;
+import com.krekerok.user.dto.kafka.UserPayload;
 import com.krekerok.user.dto.request.LoginRequest;
 import com.krekerok.user.dto.request.RegisterRequest;
 import com.krekerok.user.dto.request.ResetPasswordRequest;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +44,11 @@ public class UserServiceImpl implements UserService {
     private final JwtService jwtService;
     private final KafkaService kafkaService;
     private final ExecutorService executorService;
+
+    @Value("${topic.registration}")
+    private String registrationTopic;
+    @Value("${topic.change.password}")
+    private String changePasswordTopic;
 
     @Override
     public UserResponse registerUser(RegisterRequest registerRequest, String localization) {
@@ -106,6 +113,7 @@ public class UserServiceImpl implements UserService {
         if (passwordVerification){
             user.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
             userRepository.save(user);
+            sendPasswordChangeMessage(user);
             return userMapper.toUserResponse(user);
         } else {
             throw new VerificationException("Verification exception");
@@ -136,16 +144,32 @@ public class UserServiceImpl implements UserService {
     }
 
     private void sendGreetingMessage(User user) {
-        RegistrationPayload payload = RegistrationPayload.builder()
+        UserPayload payload = buildUserPayloadByUser(user);
+        NotificationDto notificationDto = buildNotificationDto(user.getEmail(), user.getLocalization(), payload);
+
+        executorService.submit(() -> kafkaService.sendMessage(registrationTopic, notificationDto));
+    }
+
+    private void sendPasswordChangeMessage(User user) {
+        UserPayload payload = buildUserPayloadByUser(user);
+        NotificationDto notificationDto = buildNotificationDto(user.getEmail(), user.getLocalization(), payload);
+
+        executorService.submit(() -> kafkaService.sendMessage(changePasswordTopic, notificationDto));
+    }
+
+    private UserPayload buildUserPayloadByUser(User user) {
+        return UserPayload.builder()
             .firstName(user.getFirstName())
             .lastName(user.getLastName())
             .role(user.getRole().toString())
             .build();
-        RegistrationMessageDto greetingMessage = RegistrationMessageDto.builder()
-            .email(user.getEmail())
-            .localization(user.getLocalization())
+    }
+
+    private NotificationDto buildNotificationDto(String email, String localization, Payload payload) {
+        return NotificationDto.builder()
+            .email(email)
+            .localization(localization)
             .payload(payload)
             .build();
-        executorService.submit(() -> kafkaService.sendMessageRegister(greetingMessage));
     }
 }

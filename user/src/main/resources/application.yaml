@@ -42,3 +42,5 @@ security:
 
 topic:
   registration: registration
+  change:
+    password: change_password
