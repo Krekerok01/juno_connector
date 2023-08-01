@@ -4,6 +4,7 @@ import com.krekerok.user.dto.kafka.RegistrationMessageDto;
 import com.krekerok.user.dto.kafka.RegistrationPayload;
 import com.krekerok.user.dto.request.LoginRequest;
 import com.krekerok.user.dto.request.RegisterRequest;
+import com.krekerok.user.dto.request.ResetPasswordRequest;
 import com.krekerok.user.dto.response.UserLoginResponse;
 import com.krekerok.user.dto.response.UserResponse;
 import com.krekerok.user.entity.Role;
@@ -11,6 +12,8 @@ import com.krekerok.user.entity.User;
 import com.krekerok.user.exception.EntityExistsException;
 import com.krekerok.user.exception.EntityNotFoundException;
 import com.krekerok.user.exception.InvalidCredentialsException;
+import com.krekerok.user.exception.InvalidTokenException;
+import com.krekerok.user.exception.VerificationException;
 import com.krekerok.user.kafka.KafkaService;
 import com.krekerok.user.mapper.UserMapper;
 import com.krekerok.user.repository.UserRepository;
@@ -20,8 +23,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +94,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long userId) {
         userRepository.delete(findUserById(userId));
+    }
+
+    @Override
+    public UserResponse resetPassword(ResetPasswordRequest resetPasswordRequest, HttpServletRequest httRequest) {
+        String token = getToken(httRequest);
+        String email = jwtService.getUserEmailFromToken(token);
+        User user = findUserByEmail(email);
+
+        boolean passwordVerification = passwordEncoder.matches(resetPasswordRequest.getCurrentPassword(), user.getPassword());
+        if (passwordVerification){
+            user.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
+            userRepository.save(user);
+            return userMapper.toUserResponse(user);
+        } else {
+            throw new VerificationException("Verification exception");
+        }
+    }
+
+    private String getToken(HttpServletRequest httRequest) {
+        String token = httRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        if (token == null)
+            throw new InvalidTokenException("Invalid token");
+        return token;
     }
 
     private User findUserById(Long userId) {

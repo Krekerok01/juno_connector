@@ -1,8 +1,10 @@
 package com.krekerok.user.service.impl;
 
 import com.krekerok.user.entity.User;
+import com.krekerok.user.exception.InvalidTokenException;
 import com.krekerok.user.service.JwtService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -60,6 +62,21 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    @Override
+    public String getUserEmailFromToken(String token) {
+        try {
+            String jwt = token.replace("Bearer ", "");
+            String jwtWithoutSignature = jwt.substring(0, jwt.lastIndexOf('.') + 1);
+            return Jwts.parserBuilder()
+                .build()
+                .parseClaimsJwt(jwtWithoutSignature)
+                .getBody()
+                .getSubject();
+        } catch (ExpiredJwtException ex) {
+            throw new InvalidTokenException("Token has expired!");
+        }
     }
 
     @Override
