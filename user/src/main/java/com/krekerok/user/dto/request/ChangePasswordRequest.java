@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @PasswordEquality(password = "newPassword", confirmationPassword = "confirmationPassword")
-@PasswordInequality(oldPassword = "currentPassword", newPassword = "newPassword")
+@PasswordInequality(currentPassword = "currentPassword", newPassword = "newPassword")
 public class ChangePasswordRequest {
 
     @NotBlank(message = "Current password cannot be empty")

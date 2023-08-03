@@ -16,19 +16,9 @@ import javax.validation.Payload;
 @Documented
 public @interface PasswordEquality {
 
-    String message() default "Fields values does not equals";
-
+    String message() default "The password and the confirmation password do not match.";
     Class<?>[] groups() default {};
-
     Class<? extends Payload>[] payload() default {};
-
     String password();
-
     String confirmationPassword();
-
-    @Target(TYPE)
-    @Retention(RUNTIME)
-    @interface List {
-        PasswordEquality[] value();
-    }
 }

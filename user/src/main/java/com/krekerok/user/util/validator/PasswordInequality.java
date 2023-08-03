@@ -15,15 +15,9 @@ import javax.validation.Payload;
 @Constraint(validatedBy = PasswordInequalityValidator.class)
 @Documented
 public @interface PasswordInequality {
-    String message() default "The old password and the new password cannot be the same.";
+    String message() default "The current password and the new password cannot be the same.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-    String oldPassword();
+    String currentPassword();
     String newPassword();
-
-    @Target(TYPE)
-    @Retention(RUNTIME)
-    @interface List {
-        PasswordEquality[] value();
-    }
 }
