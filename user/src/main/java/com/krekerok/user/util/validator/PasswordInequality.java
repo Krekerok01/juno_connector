@@ -3,7 +3,7 @@ package com.krekerok.user.util.validator;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import com.krekerok.user.util.validator.impl.PasswordEqualityValidator;
+import com.krekerok.user.util.validator.impl.PasswordInequalityValidator;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -12,13 +12,12 @@ import javax.validation.Payload;
 
 @Target(TYPE)
 @Retention(RUNTIME)
-@Constraint(validatedBy = PasswordEqualityValidator.class)
+@Constraint(validatedBy = PasswordInequalityValidator.class)
 @Documented
-public @interface PasswordEquality {
-
-    String message() default "The password and the confirmation password do not match.";
+public @interface PasswordInequality {
+    String message() default "The current password and the new password cannot be the same.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-    String password();
-    String confirmationPassword();
+    String currentPassword();
+    String newPassword();
 }
