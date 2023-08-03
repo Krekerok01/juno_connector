@@ -5,7 +5,7 @@ import com.krekerok.user.dto.kafka.Payload;
 import com.krekerok.user.dto.kafka.UserPayload;
 import com.krekerok.user.dto.request.LoginRequest;
 import com.krekerok.user.dto.request.RegisterRequest;
-import com.krekerok.user.dto.request.ResetPasswordRequest;
+import com.krekerok.user.dto.request.ChangePasswordRequest;
 import com.krekerok.user.dto.response.UserLoginResponse;
 import com.krekerok.user.dto.response.UserResponse;
 import com.krekerok.user.entity.Role;
@@ -104,14 +104,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse resetPassword(ResetPasswordRequest resetPasswordRequest, HttpServletRequest httRequest) {
+    public UserResponse changePassword(ChangePasswordRequest changePasswordRequest, HttpServletRequest httRequest) {
         String token = getToken(httRequest);
         String email = jwtService.getUserEmailFromToken(token);
         User user = findUserByEmail(email);
 
-        boolean passwordVerification = passwordEncoder.matches(resetPasswordRequest.getCurrentPassword(), user.getPassword());
+        boolean passwordVerification = passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword());
         if (passwordVerification){
-            user.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
+            user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
             userRepository.save(user);
             sendPasswordChangeMessage(user);
             return userMapper.toUserResponse(user);

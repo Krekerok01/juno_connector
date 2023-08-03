@@ -1,6 +1,6 @@
 package com.krekerok.user.controller;
 
-import com.krekerok.user.dto.request.ResetPasswordRequest;
+import com.krekerok.user.dto.request.ChangePasswordRequest;
 import com.krekerok.user.dto.response.UserResponse;
 import com.krekerok.user.service.UserService;
 import java.util.List;
@@ -39,9 +39,9 @@ public class UserController {
         userService.deleteById(userId);
     }
 
-    @PostMapping("/reset-password")
-    public UserResponse resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest,
+    @PostMapping("/change-password")
+    public UserResponse changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest,
         HttpServletRequest httpServletRequest){
-        return userService.resetPassword(resetPasswordRequest, httpServletRequest);
+        return userService.changePassword(changePasswordRequest, httpServletRequest);
     }
 }

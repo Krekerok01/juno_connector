@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @PasswordEquality(password = "newPassword", confirmationPassword = "confirmationPassword")
 @PasswordInequality(oldPassword = "currentPassword", newPassword = "newPassword")
-public class ResetPasswordRequest {
+public class ChangePasswordRequest {
 
     @NotBlank(message = "Current password cannot be empty")
     @Size(min = 6, max = 25, message = "Current password min size is 2 symbols and max size is 30 symbols")
