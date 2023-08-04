@@ -3,9 +3,9 @@ package com.krekerok.user.service.impl;
 import com.krekerok.user.dto.kafka.NotificationDto;
 import com.krekerok.user.dto.kafka.Payload;
 import com.krekerok.user.dto.kafka.UserPayload;
+import com.krekerok.user.dto.request.ChangePasswordRequest;
 import com.krekerok.user.dto.request.LoginRequest;
 import com.krekerok.user.dto.request.RegisterRequest;
-import com.krekerok.user.dto.request.ChangePasswordRequest;
 import com.krekerok.user.dto.response.UserLoginResponse;
 import com.krekerok.user.dto.response.UserResponse;
 import com.krekerok.user.entity.Role;
@@ -18,8 +18,8 @@ import com.krekerok.user.exception.VerificationException;
 import com.krekerok.user.kafka.KafkaService;
 import com.krekerok.user.mapper.UserMapper;
 import com.krekerok.user.repository.UserRepository;
-import com.krekerok.user.service.JwtService;
 import com.krekerok.user.service.UserService;
+import com.krekerok.user.util.JwtUtil;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -41,10 +41,9 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
-    private final JwtService jwtService;
     private final KafkaService kafkaService;
     private final ExecutorService executorService;
-
+    private final JwtUtil jwtUtil;
     @Value("${topic.registration}")
     private String registrationTopic;
     @Value("${topic.change.password}")
@@ -69,8 +68,8 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new InvalidCredentialsException("Invalid login or password"));
         if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             return UserLoginResponse.builder()
-                .accessToken(jwtService.generateAccessToken(user))
-                .refreshToken(jwtService.generateRefreshToken(user))
+                .accessToken(jwtUtil.generateAccessToken(user))
+                .refreshToken(jwtUtil.generateRefreshToken(user))
                 .build();
         } else {
             throw new InvalidCredentialsException("Invalid login or password");
@@ -106,7 +105,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse changePassword(ChangePasswordRequest changePasswordRequest, HttpServletRequest httRequest) {
         String token = getToken(httRequest);
-        String email = jwtService.getUserEmailFromToken(token);
+        String email = jwtUtil.getUserEmailFromToken(token);
         User user = findUserByEmail(email);
 
         boolean passwordVerification = passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword());

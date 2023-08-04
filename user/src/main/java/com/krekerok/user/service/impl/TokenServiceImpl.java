@@ -5,9 +5,9 @@ import com.krekerok.user.entity.RefreshToken;
 import com.krekerok.user.entity.User;
 import com.krekerok.user.exception.InvalidTokenException;
 import com.krekerok.user.repository.RefreshTokenRepository;
-import com.krekerok.user.service.JwtService;
 import com.krekerok.user.service.TokenService;
 import com.krekerok.user.service.UserService;
+import com.krekerok.user.util.JwtUtil;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -21,9 +21,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
-    private final JwtService jwtService;
     private final UserService userService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtUtil jwtUtil;
 
     @Override
     public UserLoginResponse refreshToken(HttpServletRequest request) {
@@ -34,11 +34,11 @@ public class TokenServiceImpl implements TokenService {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             refreshToken = authHeader.substring("Bearer ".length());
             checkToken(refreshToken);
-            User user = userService.findUserByEmail(jwtService.extractEmail(refreshToken));
+            User user = userService.findUserByEmail(jwtUtil.extractEmail(refreshToken));
             saveOldToken(refreshToken, user);
-            if (jwtService.isTokenValid(refreshToken, user)) {
-                String accessToken = jwtService.generateAccessToken(user);
-                String newRefreshToken = jwtService.generateRefreshToken(user);
+            if (jwtUtil.isTokenValid(refreshToken, user)) {
+                String accessToken = jwtUtil.generateAccessToken(user);
+                String newRefreshToken = jwtUtil.generateRefreshToken(user);
                 return buildUserLoginResponse(accessToken, newRefreshToken);
             }
         }
