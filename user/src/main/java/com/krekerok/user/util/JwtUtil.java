@@ -1,8 +1,7 @@
-package com.krekerok.user.service.impl;
+package com.krekerok.user.util;
 
 import com.krekerok.user.entity.User;
 import com.krekerok.user.exception.InvalidTokenException;
-import com.krekerok.user.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -16,19 +15,17 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class JwtServiceImpl implements JwtService {
-
+@Component
+public class JwtUtil {
     @Value("${security.jwt.secret}")
-    private String SECRET_KEY ;
+    private String SECRET_KEY;
     @Value("${security.jwt.token.validity.access}")
     private long ACCESS_TOKEN_VALIDITY;
     @Value("${security.jwt.token.validity.refresh}")
     private long REFRESH_TOKEN_VALIDITY;
 
-    @Override
     public String generateAccessToken(User user) {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("user_id", user.getUserId());
@@ -43,7 +40,6 @@ public class JwtServiceImpl implements JwtService {
 
     }
 
-    @Override
     public String generateRefreshToken(User userDetails) {
         return Jwts.builder()
             .setSubject(userDetails.getEmail())
@@ -53,18 +49,15 @@ public class JwtServiceImpl implements JwtService {
             .compact();
     }
 
-    @Override
     public boolean isTokenValid(String token, User user) {
         final String email = extractEmail(token);
         return (email.equals(user.getEmail())) && !isTokenExpired(token);
     }
 
-    @Override
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    @Override
     public String getUserEmailFromToken(String token) {
         try {
             String jwt = token.replace("Bearer ", "");
@@ -79,7 +72,6 @@ public class JwtServiceImpl implements JwtService {
         }
     }
 
-    @Override
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
