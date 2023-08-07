@@ -6,6 +6,7 @@ import com.krekerok.user.dto.kafka.UserPayload;
 import com.krekerok.user.dto.request.ChangePasswordRequest;
 import com.krekerok.user.dto.request.LoginRequest;
 import com.krekerok.user.dto.request.RegisterRequest;
+import com.krekerok.user.dto.request.UpdateUserRequest;
 import com.krekerok.user.dto.response.UserLoginResponse;
 import com.krekerok.user.dto.response.UserResponse;
 import com.krekerok.user.entity.Role;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -98,13 +100,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest) {
+        String firstName = updateUserRequest.getFirstName();
+        String lastName = updateUserRequest.getLastName();
+        String email = updateUserRequest.getEmail();
+
+        User user = findUserById(userId);
+
+        if (StringUtils.isNotBlank(firstName))
+            user.setFirstName(firstName);
+
+        if (StringUtils.isNotBlank(lastName))
+            user.setLastName(lastName);
+
+        if (StringUtils.isNotBlank(email))
+            user.setEmail(email);
+
+        userRepository.save(user);
+        return userMapper.toUserResponse(user);
+    }
+
+    @Override
     public void deleteById(Long userId) {
         userRepository.delete(findUserById(userId));
     }
 
     @Override
-    public UserResponse changePassword(ChangePasswordRequest changePasswordRequest, HttpServletRequest httRequest) {
-        String token = getToken(httRequest);
+    public UserResponse changePassword(ChangePasswordRequest changePasswordRequest, HttpServletRequest httpRequest) {
+        String token = getToken(httpRequest);
         String email = jwtUtil.getUserEmailFromToken(token);
         User user = findUserByEmail(email);
 
