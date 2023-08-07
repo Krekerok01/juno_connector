@@ -3,6 +3,7 @@ package com.krekerok.user.service;
 import com.krekerok.user.dto.request.LoginRequest;
 import com.krekerok.user.dto.request.RegisterRequest;
 import com.krekerok.user.dto.request.ChangePasswordRequest;
+import com.krekerok.user.dto.request.UpdateUserRequest;
 import com.krekerok.user.dto.response.UserLoginResponse;
 import com.krekerok.user.dto.response.UserResponse;
 import com.krekerok.user.entity.User;
@@ -20,6 +21,8 @@ public interface UserService {
     List<UserResponse> findAll();
 
     UserResponse findById(Long userId);
+
+    UserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest);
 
     void deleteById(Long userId);
 

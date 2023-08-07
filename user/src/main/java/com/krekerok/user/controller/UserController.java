@@ -1,6 +1,7 @@
 package com.krekerok.user.controller;
 
 import com.krekerok.user.dto.request.ChangePasswordRequest;
+import com.krekerok.user.dto.request.UpdateUserRequest;
 import com.krekerok.user.dto.response.UserResponse;
 import com.krekerok.user.service.UserService;
 import java.util.List;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +34,11 @@ public class UserController {
     @GetMapping("/{userId}")
     public UserResponse findById(@PathVariable Long userId) {
         return userService.findById(userId);
+    }
+
+    @PatchMapping("/{userId}")
+    public UserResponse updateUser(@PathVariable Long userId, @RequestBody @Valid UpdateUserRequest updateUserRequest){
+        return userService.updateUser(userId, updateUserRequest);
     }
 
     @DeleteMapping("/{userId}")
