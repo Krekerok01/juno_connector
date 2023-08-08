@@ -30,3 +30,9 @@ spring:
             - Path=/users/**
           filters:
             - RewritePath=/users(?<remaining>.*), /api/v1/users${remaining}
+        - id: questions
+          uri: lb://forum-service
+          predicates:
+            - Path=/questions/**
+          filters:
+            - RewritePath=/questions(?<remaining>.*), /api/v1/questions${remaining}

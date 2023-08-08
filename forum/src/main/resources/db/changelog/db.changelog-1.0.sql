@@ -10,7 +10,7 @@ create table if not exists questions(
     is_open boolean not null,
     question_text varchar(1000) not null,
     opening_date timestamp not null,
-    closing_date timestamp not null,
+    closing_date timestamp,
     modification_date timestamp not null,
 
     constraint questions_pk primary key(question_id)
