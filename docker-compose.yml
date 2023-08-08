@@ -89,3 +89,25 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: user-db
+      
+  forum-service:
+    image: junoconnector-forum-service:latest
+    build: forum
+    container_name: forum-service
+    environment:
+      DATASOURCE_URL: jdbc:postgresql://forum-database:5432/forum-db
+      eureka.client.serviceUrl.defaultZone: http://eureka-server-service:8761/eureka/
+    depends_on:
+      eureka-server-service:
+        condition: service_healthy
+      forum-database:
+        condition: service_started
+  forum-database:
+    container_name: forum-database
+    image: postgres
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: forum-db
