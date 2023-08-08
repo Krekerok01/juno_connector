@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
@@ -16,7 +18,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "educations")
+@Table(name = "jobs")
 @Setter
 @Getter
 @Builder
@@ -24,22 +26,29 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class Education {
+public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "education_id")
-    private Long educationId;
+    @Column(name = "job_id")
+    private Long jobId;
 
-    @Column(name = "institution_name")
-    private String institutionName;
+    @Column(name = "company_name")
+    private String companyName;
 
-    @Column(name = "speciality")
-    private String speciality;
+    @Column(name = "position")
+    private String position;
 
     @Column(name = "start_date")
     private LocalDate startDate;
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Column(name = "additional_info")
+    private String additionalInfo;
+
+    @ManyToOne
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
 }
