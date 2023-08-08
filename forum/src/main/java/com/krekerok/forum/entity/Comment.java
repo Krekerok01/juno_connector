@@ -35,8 +35,8 @@ public class Comment {
     @Column(name = "comment_id")
     private Long commentId;
 
-    @Column(name = "user_email", nullable = false)
-    private String userEmail;
+    @Column(name = "author_id", nullable = false)
+    private Long authorId;
 
     @Column(name = "comment_text", nullable = false)
     private String commentText;
