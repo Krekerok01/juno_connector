@@ -5,8 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -16,7 +17,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "educations")
+@Table(name = "hobbies")
 @Setter
 @Getter
 @Builder
@@ -24,22 +25,20 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class Education {
+public class Hobby {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "education_id")
-    private Long educationId;
+    @Column(name = "hobby_id")
+    private Long hobbyId;
 
-    @Column(name = "institution_name")
-    private String institutionName;
+    @Column(name = "hobby_name")
+    private String hobbyName;
 
-    @Column(name = "speciality")
-    private String speciality;
+    @Column(name = "hobby_info")
+    private String hobbyInfo;
 
-    @Column(name = "start_date")
-    private LocalDate startDate;
-
-    @Column(name = "end_date")
-    private LocalDate endDate;
+    @ManyToOne
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
 }
