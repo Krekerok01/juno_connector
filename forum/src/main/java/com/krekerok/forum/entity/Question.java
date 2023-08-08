@@ -33,8 +33,8 @@ public class Question {
     @Column(name = "question_id")
     private Long questionId;
 
-    @Column(name = "user_email", nullable = false)
-    private String userEmail;
+    @Column(name = "author_id", nullable = false)
+    private Long authorId;
 
     @Column(name = "is_open", nullable = false)
     private boolean isOpen;
