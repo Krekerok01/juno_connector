@@ -7,10 +7,10 @@ create sequence questions_seq start 1 increment 1;
 create table if not exists questions(
     question_id bigserial not null,
     author_id bigint not null,
-    is_open boolean not null,
+    open_for_discussion boolean not null,
     question_text varchar(1000) not null,
     opening_date timestamp not null,
-    closing_date timestamp not null,
+    closing_date timestamp,
     modification_date timestamp not null,
 
     constraint questions_pk primary key(question_id)
