@@ -36,8 +36,8 @@ public class Question {
     @Column(name = "author_id", nullable = false)
     private Long authorId;
 
-    @Column(name = "is_open", nullable = false)
-    private boolean isOpen;
+    @Column(name = "open_for_discussion", nullable = false)
+    private boolean openForDiscussion;
 
     @Column(name = "question_text", nullable = false)
     private String questionText;
