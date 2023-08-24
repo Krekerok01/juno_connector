@@ -3,19 +3,21 @@ package com.krekerok.forum.service.impl;
 import com.krekerok.forum.dto.request.QuestionRequest;
 import com.krekerok.forum.dto.response.QuestionResponse;
 import com.krekerok.forum.entity.Question;
+import com.krekerok.forum.exception.EntityNotFoundException;
+import com.krekerok.forum.exception.ServiceClientException;
+import com.krekerok.forum.exception.ServiceUnavailableException;
+import com.krekerok.forum.exception.VerificationException;
 import com.krekerok.forum.repository.QuestionRepository;
 import com.krekerok.forum.service.QuestionService;
 import com.krekerok.forum.util.mapper.AppMapper;
 import com.krekerok.forum.util.security.JwtUtil;
 import com.netflix.discovery.EurekaClient;
 import java.time.LocalDateTime;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -53,7 +55,7 @@ public class QuestionServiceImpl implements QuestionService {
         Long userRequestId = getUserIdByEmail(userEmail);
 
         Question question = questionRepository.findById(questionId)
-            .orElseThrow(() -> new RuntimeException("Question exception"));
+            .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
 
         if (question.getAuthorId().equals(userRequestId)) {
             question.setClosingDate(LocalDateTime.now());
@@ -61,8 +63,7 @@ public class QuestionServiceImpl implements QuestionService {
             questionRepository.save(question);
             return mapper.toQuestionResponse(question);
         }
-
-        throw new RuntimeException("Validation Exception");
+        throw new VerificationException("Verification exception");
     }
 
     private Long getUserIdByEmail(String userEmail) {
@@ -70,7 +71,7 @@ public class QuestionServiceImpl implements QuestionService {
         return webClient.get().uri(uri)
             .retrieve()
             .onStatus(HttpStatus::is4xxClientError, response -> handleTicketServiceError(response))
-            .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("User service is unavailable. Try again later.")))
+            .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new ServiceUnavailableException("User service is unavailable. Try again later.")))
             .bodyToMono(Long.class)
             .block();
     }
@@ -89,16 +90,16 @@ public class QuestionServiceImpl implements QuestionService {
         try {
             return eurekaClient.getNextServerFromEureka("user-service", false).getHomePageUrl();
         } catch (RuntimeException e) {
-            throw new RuntimeException("User service is unavailable. Try again later.");
+            throw new ServiceUnavailableException("User service is unavailable. Try again later.");
         }
     }
 
     private Mono<? extends Throwable> handleTicketServiceError(ClientResponse response) {
         if (response.statusCode() == HttpStatus.NOT_FOUND) {
-            return Mono.error(new RuntimeException("User(s) not found."));
+            return Mono.error(new ServiceClientException("User(s) not found."));
         } else {
             return response.bodyToMono(String.class)
-                .flatMap(errorBody -> Mono.error(new RuntimeException("Bad request. Error: " + errorBody)));
+                .flatMap(errorBody -> Mono.error(new ServiceClientException("Bad request. Error: " + errorBody)));
         }
     }
 }
