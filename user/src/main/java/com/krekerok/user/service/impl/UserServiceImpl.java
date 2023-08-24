@@ -100,6 +100,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Long findByEmail(String userEmail) {
+        return userRepository.findByEmail(userEmail)
+            .map(User::getUserId)
+            .orElseThrow(() -> new EntityNotFoundException("User with email " + userEmail + " not found"));
+    }
+
+    @Override
     public UserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest) {
         String firstName = updateUserRequest.getFirstName();
         String lastName = updateUserRequest.getLastName();

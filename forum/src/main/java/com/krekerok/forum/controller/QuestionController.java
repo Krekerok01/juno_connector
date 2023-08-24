@@ -7,7 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +27,12 @@ public class QuestionController {
     @PostMapping("/open")
     public ResponseEntity<QuestionResponse> openQuestion(@RequestBody @Valid QuestionRequest questionRequest,
         HttpServletRequest httpRequest){
-        return questionService.openQuestion(questionRequest, httpRequest);
+        return new ResponseEntity<>(questionService.openQuestion(questionRequest, httpRequest), HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{questionId}/close")
+    public QuestionResponse closeQuestion(@PathVariable(name = "questionId") Long questionId,
+        HttpServletRequest httpRequest){
+        return questionService.closeQuestion(questionId, httpRequest);
     }
 }

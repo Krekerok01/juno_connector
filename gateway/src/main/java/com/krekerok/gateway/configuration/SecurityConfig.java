@@ -27,6 +27,8 @@ public class SecurityConfig {
             .authorizeExchange()
             .pathMatchers(HttpMethod.OPTIONS, "/**")
             .permitAll()
+            .pathMatchers(HttpMethod.GET, "/users/**")
+            .permitAll()
             .pathMatchers("/users/**", "/questions/**")
             .authenticated()
             .pathMatchers("/authenticate/**")

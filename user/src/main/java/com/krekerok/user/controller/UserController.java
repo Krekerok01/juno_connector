@@ -36,6 +36,11 @@ public class UserController {
         return userService.findById(userId);
     }
 
+    @GetMapping("/email/{userEmail}")
+    public Long findByEmail(@PathVariable String userEmail) {
+        return userService.findByEmail(userEmail);
+    }
+
     @PatchMapping("/{userId}")
     public UserResponse updateUser(@PathVariable Long userId, @RequestBody @Valid UpdateUserRequest updateUserRequest){
         return userService.updateUser(userId, updateUserRequest);

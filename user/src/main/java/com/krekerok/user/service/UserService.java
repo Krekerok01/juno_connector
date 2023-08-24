@@ -20,6 +20,8 @@ public interface UserService {
 
     List<UserResponse> findAll();
 
+    Long findByEmail(String userEmail);
+
     UserResponse findById(Long userId);
 
     UserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest);
