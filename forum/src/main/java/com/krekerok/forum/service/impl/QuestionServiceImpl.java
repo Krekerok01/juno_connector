@@ -17,6 +17,7 @@ import org.apache.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -32,7 +33,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final WebClient webClient;
 
     @Override
-    public ResponseEntity<QuestionResponse> openQuestion(QuestionRequest questionRequest,
+    public QuestionResponse openQuestion(QuestionRequest questionRequest,
         HttpServletRequest httpRequest) {
 
         String userEmail = JwtUtil.getUserEmailFromToken(httpRequest.getHeader(HttpHeaders.AUTHORIZATION));
@@ -41,7 +42,27 @@ public class QuestionServiceImpl implements QuestionService {
         Question question = buildQuestion(authorId, questionRequest.getQuestionText(), LocalDateTime.now());
         questionRepository.save(question);
 
-        return new ResponseEntity<>(mapper.toQuestionResponse(question), HttpStatus.CREATED);
+        return mapper.toQuestionResponse(question);
+    }
+
+    @Transactional
+    @Override
+    public QuestionResponse closeQuestion(Long questionId, HttpServletRequest httpRequest) {
+
+        String userEmail = JwtUtil.getUserEmailFromToken(httpRequest.getHeader(HttpHeaders.AUTHORIZATION));
+        Long userRequestId = getUserIdByEmail(userEmail);
+
+        Question question = questionRepository.findById(questionId)
+            .orElseThrow(() -> new RuntimeException("Question exception"));
+
+        if (question.getAuthorId().equals(userRequestId)) {
+            question.setClosingDate(LocalDateTime.now());
+            question.setOpenForDiscussion(false);
+            questionRepository.save(question);
+            return mapper.toQuestionResponse(question);
+        }
+
+        throw new RuntimeException("Validation Exception");
     }
 
     private Long getUserIdByEmail(String userEmail) {

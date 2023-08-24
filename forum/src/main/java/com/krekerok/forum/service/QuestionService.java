@@ -7,5 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface QuestionService {
 
-    ResponseEntity<QuestionResponse> openQuestion(QuestionRequest questionRequest, HttpServletRequest httpRequest);
+    QuestionResponse openQuestion(QuestionRequest questionRequest, HttpServletRequest httpRequest);
+
+    QuestionResponse closeQuestion(Long questionId, HttpServletRequest httpRequest);
 }
