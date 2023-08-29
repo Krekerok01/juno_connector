@@ -29,7 +29,7 @@ public class SecurityConfig {
             .permitAll()
             .pathMatchers(HttpMethod.GET, "/users/**")
             .permitAll()
-            .pathMatchers("/users/**", "/questions/**")
+            .pathMatchers("/users/**", "/questions/**", "/comments/**")
             .authenticated()
             .pathMatchers("/authenticate/**")
             .permitAll()
