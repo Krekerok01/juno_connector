@@ -30,17 +30,20 @@ public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "job_id")
+    @Column(name = "job_id", nullable = false)
     private Long jobId;
 
-    @Column(name = "company_name")
+    @Column(name = "company_name", nullable = false)
     private String companyName;
 
-    @Column(name = "position")
+    @Column(name = "position", nullable = false)
     private String position;
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
+
+    @Column(name = "current_job")
+    private boolean currentJob;
 
     @Column(name = "end_date")
     private LocalDate endDate;

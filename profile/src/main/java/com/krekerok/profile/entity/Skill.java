@@ -29,10 +29,10 @@ public class Skill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "skill_id")
+    @Column(name = "skill_id", nullable = false)
     private Long skillId;
 
-    @Column(name = "skill_name")
+    @Column(name = "skill_name", nullable = false)
     private String skillName;
 
     @ManyToOne
