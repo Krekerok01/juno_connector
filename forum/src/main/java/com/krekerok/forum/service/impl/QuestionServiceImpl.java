@@ -3,8 +3,8 @@ package com.krekerok.forum.service.impl;
 import com.krekerok.forum.dto.request.QuestionRequest;
 import com.krekerok.forum.dto.response.QuestionResponse;
 import com.krekerok.forum.entity.Question;
+import com.krekerok.forum.exception.AccessException;
 import com.krekerok.forum.exception.EntityNotFoundException;
-import com.krekerok.forum.exception.VerificationException;
 import com.krekerok.forum.repository.QuestionRepository;
 import com.krekerok.forum.service.QuestionService;
 import com.krekerok.forum.util.getter.UserInfoGetter;
@@ -57,7 +57,13 @@ public class QuestionServiceImpl implements QuestionService {
             questionRepository.save(question);
             return mapper.toQuestionResponse(question);
         }
-        throw new VerificationException("Verification exception");
+        throw new AccessException("Verification exception");
+    }
+
+    @Override
+    public Question getQuestionById(Long questionId) {
+        return questionRepository.findById(questionId)
+            .orElseThrow(() -> new EntityNotFoundException("Question with id " + questionId + " not found"));
     }
 
     private Question buildQuestion(Long authorId, String questionText, LocalDateTime now) {
