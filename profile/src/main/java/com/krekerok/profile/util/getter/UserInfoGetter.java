@@ -6,7 +6,6 @@ import com.krekerok.profile.exception.ServiceUnavailableException;
 import com.netflix.discovery.EurekaClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,8 +24,8 @@ public class UserInfoGetter {
         return webClient.get()
             .uri(uri)
             .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, response -> handleTicketServiceError(response))
-            .onStatus(HttpStatusCode::is5xxServerError, error -> Mono.error(new ServiceUnavailableException("User service is unavailable. Try again later.")))
+            .onStatus(HttpStatus::is4xxClientError, response -> handleTicketServiceError(response))
+            .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new ServiceUnavailableException("User service is unavailable. Try again later.")))
             .bodyToMono(Long.class)
             .block();
     }

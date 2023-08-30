@@ -7,7 +7,7 @@ import com.krekerok.profile.service.ProfileService;
 import com.krekerok.profile.util.getter.UserInfoGetter;
 import com.krekerok.profile.util.mapper.AppMapper;
 import com.krekerok.profile.util.security.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
 import org.springframework.stereotype.Service;

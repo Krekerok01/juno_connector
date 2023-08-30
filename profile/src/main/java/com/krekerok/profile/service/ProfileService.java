@@ -1,7 +1,7 @@
 package com.krekerok.profile.service;
 
 import com.krekerok.profile.dto.request.ProfileRequest;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 public interface ProfileService {
 

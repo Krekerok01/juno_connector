@@ -42,3 +42,9 @@ spring:
             - Path=/comments/**
           filters:
             - RewritePath=/comments(?<remaining>.*), /api/v1/comments${remaining}
+        - id: profiles
+          uri: lb://profile-service
+          predicates:
+            - Path=/profiles/**
+          filters:
+            - RewritePath=/profiles(?<remaining>.*), /api/v1/profiles${remaining}
