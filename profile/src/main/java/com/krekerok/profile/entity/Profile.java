@@ -48,8 +48,4 @@ public class Profile {
 
     @Column(name = "city")
     private String city;
-
-    @ManyToOne
-    @JoinColumn(name = "education_id")
-    private Education education;
 }

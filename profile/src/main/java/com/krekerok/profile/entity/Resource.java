@@ -31,18 +31,18 @@ public class Resource {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "resource_id")
+    @Column(name = "resource_id", nullable = false)
     private Long resourceId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "resource_type")
+    @Column(name = "resource_type", nullable = false)
     private ResourceType resourceType;
 
-    @Column(name = "resource_name")
+    @Column(name = "resource_name", nullable = false)
     private String resourceName;
 
-    @Column(name = "link")
-    private String link;
+    @Column(name = "resource_link", nullable = false)
+    private String resourceLink;
 
     @ManyToOne
     @JoinColumn(name = "profile_id")
