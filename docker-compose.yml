@@ -111,3 +111,25 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: forum-db
+
+  profile-service:
+    image: junoconnector-profile-service:latest
+    build: profile
+    container_name: profile-service
+    environment:
+      DATASOURCE_URL: jdbc:postgresql://profile-database:5432/profile-db
+      eureka.client.serviceUrl.defaultZone: http://eureka-server-service:8761/eureka/
+    depends_on:
+      eureka-server-service:
+        condition: service_healthy
+      profile-database:
+        condition: service_started
+  profile-database:
+    container_name: profile-database
+    image: postgres
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: profile-db

@@ -23,9 +23,9 @@ spring:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.yaml
 
-#eureka:
-#  instance:
-#    instance-id: ${spring.application.name}:${random.uuid}
-#  client:
-#    service-url:
-#      defaultZone: ${EUREKA_URL}
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL}
