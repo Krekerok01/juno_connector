@@ -2,6 +2,7 @@ package com.krekerok.profile.service.impl;
 
 import com.krekerok.profile.dto.request.ProfileRequest;
 import com.krekerok.profile.entity.Profile;
+import com.krekerok.profile.exception.EntityExistsException;
 import com.krekerok.profile.repository.ProfileRepository;
 import com.krekerok.profile.service.ProfileService;
 import com.krekerok.profile.util.getter.UserInfoGetter;
@@ -24,10 +25,13 @@ public class ProfileServiceImpl implements ProfileService {
     public Long createProfile(ProfileRequest profileRequest, HttpServletRequest httpRequest) {
 
         String userEmail = JwtUtil.getUserEmailFromToken(httpRequest.getHeader(HttpHeaders.AUTHORIZATION));
-        Long userRequestId = userInfoGetter.getUserIdByEmail(userEmail);
+        Long userId = userInfoGetter.getUserIdByEmail(userEmail);
+
+        if (profileRepository.existsByUserId(userId))
+            throw new EntityExistsException("The profile of this user exists");
 
         Profile profile = appMapper.toProfile(profileRequest);
-        profile.setUserId(userRequestId);
+        profile.setUserId(userId);
         profileRepository.save(profile);
         return profile.getProfileId();
     }
