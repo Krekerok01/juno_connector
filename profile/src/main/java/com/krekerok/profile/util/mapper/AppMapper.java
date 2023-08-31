@@ -1,6 +1,7 @@
 package com.krekerok.profile.util.mapper;
 
 import com.krekerok.profile.dto.request.ProfileRequest;
+import com.krekerok.profile.dto.response.ProfileResponse;
 import com.krekerok.profile.entity.Profile;
 import org.mapstruct.Mapper;
 
@@ -8,4 +9,6 @@ import org.mapstruct.Mapper;
 public interface AppMapper {
 
     Profile toProfile(ProfileRequest profileRequest);
+
+    ProfileResponse toProfileResponse(Profile profile);
 }
