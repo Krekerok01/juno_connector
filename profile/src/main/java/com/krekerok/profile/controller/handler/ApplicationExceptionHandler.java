@@ -2,6 +2,7 @@ package com.krekerok.profile.controller.handler;
 
 
 import com.krekerok.profile.dto.response.ExceptionResponse;
+import com.krekerok.profile.exception.AccessException;
 import com.krekerok.profile.exception.EntityExistsException;
 import com.krekerok.profile.exception.EntityNotFoundException;
 import com.krekerok.profile.exception.ServiceClientException;
@@ -22,6 +23,11 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<ExceptionResponse> entityExistsExceptionHandler(EntityExistsException e) {
         return new ResponseEntity<>(buildExceptionResponse(e.getMessage(), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccessException.class)
+    public ResponseEntity<ExceptionResponse> accessExceptionHandler(AccessException e){
+        return new ResponseEntity<>(buildExceptionResponse(e.getMessage(), HttpStatus.FORBIDDEN), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(ServiceUnavailableException.class)
